@@ -23,7 +23,10 @@
     <button style="width: 100px;height: 30px;background-color: deepskyblue" id="btn">解除</button>
     <button style="width: 100px;height: 30px;background-color: deepskyblue" id="stop">禁用</button>
     <button style="width: 100px;height: 30px;background-color: deepskyblue" id="three">设置值为3</button>
-    <select class="select" disabled name="" id="category" style="width: 200px;height: 37px;">
+    <button style="width: 100px;height: 30px;background-color: deepskyblue" id="destroy">销毁</button>
+    <button style="width: 100px;height: 30px;background-color: deepskyblue" id="refresh">刷新</button>
+
+    <select class="select"  name="" id="category" style="width: 200px;height: 37px;">
         <option value="1">一</option>
         <option value="2">二</option>
         <option value="3" selected>三</option>
@@ -33,46 +36,60 @@
 </div>
 
 </body>
-<script src="js/jquery.js"></script>
-<script src="js/iselect.js" language="JavaScript" charset="utf-8"></script>
-<!--<script src="js/native's iselect.js" language="JavaScript" charset="utf-8"></script>-->
+<script src="js/ISelect.js" language="JavaScript" charset="utf-8"></script>
 <script language="JavaScript">
-// native's iselect 原生js版本
-// iselect 依赖JQ版本
+// iselect 不需依赖JQ
 
 /*demo /s*/
     var S = new ISelect({
-        ele: '#category'//下拉框ID,
+        ele: '#category'//下拉框ID
     });
 /*demo /e*/
   
 /*params /s*/
+    //ele: '#category'//下拉框ID
     //hideCb:隐藏时的回调
     //showCb:显示时的回调
     //chooseCb:选择某一项的回调
     //ready:初始化完毕的回调
+    //destroyCb:销毁的回调
     //所有回调中的this指向实例
 /*params /e*/
 
+/*function /s*/
+    //S.refresh()刷新
+    //S.destroy()销毁
+/*function /e*/
 
 
-    $('#btn').click(function () {
-        S.$prop.disabled = false;//取消禁用
-    });
-    $('#stop').click(function () {
-        S.$prop.disabled = true;//禁用
-    });
-    $('#three').click(function () {
-        S.$prop.value = 3;//选中值为3的这一项
-    });
-//通过实例上的$prop的属性：disabled、value、html来控制是否禁用、选中项和显示的文本,
-//如果通过其他途径更改值（JQ赋值）需要调用实例上的refresh()方法来通知ISelect来更新试图
-     
+    var btn=document.querySelector('#btn');
+    var stop=document.querySelector('#stop');
+    var three=document.querySelector('#three');
+    var destroy=document.querySelector('#destroy');
+    var refresh=document.querySelector('#refresh');
+    btn.onclick=function () {
+        S.disabled = false;//取消禁用
+    };
+    stop.onclick=function () {
+        S.disabled = true;//禁用
+    };
+    three.onclick=function () {
+        S.value = 3;//选中值为3的这一项
+    };
+    destroy.onclick=function () {
+        S.destroy();//销毁
+    };
+    refresh.onclick=function () {
+        S.refresh();//刷新
+    };
+//通过实例上的：disabled、value、html来控制是否禁用、选中项和显示的文本,
+//如果通过其他途径更改值（JQ赋值或者原生js赋值）需要调用实例上的refresh()方法来通知ISelect来更新试图
+
 //例如使用jq方法改变值
 //$('#category').val(5);
 //需要调用刷新方法：
 //S.refresh()
-    
-//赋值$prop.html仅仅是更改了显示的文本，并没有改变当前值
+
+//赋值S.html仅仅是更改了显示的文本，并没有改变当前值
 </script>
 </html>

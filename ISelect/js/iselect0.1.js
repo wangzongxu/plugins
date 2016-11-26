@@ -1,161 +1,242 @@
-/**
- * @name  ISelect 下拉列表插件
- * @param {ele:'容器原生或者jq元素',
-     *         content:'默认显示的标题',
-     *         list:'下拉列表（str）',
-     *         showCb:'列表为下拉状态的回调',
-     *         hideCb:'列表为隐藏状态的回调',
-     *         changeContentCb:'当选择下拉列表中的某一项的回调',this=>ele,事件对象event=>点击的元素
-     *		   bindEvent:'只绑定事件，不进行列表渲染（在后台渲染列表的时候，或者不需要动态渲染的时候）'		
-     *         ready:'初始化完毕的回调'this=>ele}
- * @returns {ISelect}：返回当前实例
- * @constructor ：ISelect
- */
-/**
- * 实例上可调用此方法进行联动或者刷新列表
- * @name  refresh 下拉列表的刷新方法
- * @param {content:'默认显示的标题',list:'下拉列表（str）'}
- * 例：var s = new ISelect({
-				
-		  })
-
- s.refresh({
-				
-	 	  })
- */
-/*select--------------*/
-var ISelect = function (option) {
-    this.ele = option.ele instanceof $ ? option.ele : $(option.ele);//转换成jq对象
-    this.text = null;//p
-    this.row = null;//li
-    this.box = null;//ul
-    this.eLength = this.ele.length;//选中元素数量
-    this.reg = /<([a-z]+)(?:.*?)>([\s\S]*?)<\/([a-z]+)>/ig;
-    this.list = typeof option.list == 'string' ? option.list : '<li>请选择</li>';//使用时根据需要手动拼接下拉列表的li字符串
-    this.content = option.content || this.reg.exec(this.list);//可自定义选中的内容，默认是列表的第一项
-    this.showCb = option.showCb instanceof Function ? option.showCb : null;//下拉框显示时候的回调
-    this.hideCb = option.hideCb instanceof Function ? option.hideCb : null;//下拉框隐藏时候的回调
-    this.changeContentCb = option.changeContentCb instanceof Function ? option.changeContentCb : null;//在选择某一条内容后的回调
-    this.ready = option.ready instanceof Function ? option.ready : null;//初始化的回调
-    this.bindEvent = option.bindEvent || false;
-    this.body = $('body');
-    this.init();
-    return this
-};
-ISelect.prototype = {
-    constructor: ISelect,
-    init: function () {
-        if (!this.ele[0].reset) {
-            this.ele.addClass('selectcol');
-            if(!this.bindEvent){//只绑定事件，不进行数据插入
-                this.appendList();
-            }
-            this.toggle();
-            this.hide();
-            this.changeContent();
-            this.readyStatus();
-        }
-    },
-    refresh: function (newObj) {
-        this.list = typeof newObj.list == 'string' ? newObj.list : '<li>请选择</li>';
-        this.content = newObj.content || this.reg.exec(this.list);
-        this.appendList();
-        this.changeContent();
-    },
-    appendList: function () {
-        if (this.eLength != 1) {
-            throw new Error('“ele”参数错误。需输入正确的单个元素！')
-        }
-        this.box = this.ele.children('ul');
-        this.box.html(this.list);
-    },
-    toggle: function () {
-        if(this.ele.attr('disabled')){
-            this.ele.css('cursor','no-drop');
-            return
-        }
-        var that = this;
-        if(!this.box){
-            this.box = this.ele.children('ul');
-        }
-        that.ele.on('click', function (e) {
-            if ($(this).hasClass('active')) {
-                $(this).removeClass('active');
-                that.box.removeClass('iselectTop');
-                if (that.hideCb)that.hideCb()
-            } else {
-                $(this).addClass('active');
-                that.htmlCH=document.documentElement.clientHeight||document.body.clientHeight;
-                that.htmlST=document.documentElement.scrollTop||document.body.scrollTop;
-                that.boxH=that.box.outerHeight();
-                that.eleH=that.ele.outerHeight();
-                that.eleT=that.ele.offset().top-that.htmlST;
-                that.overH=that.htmlCH-that.eleH-that.eleT;
-                if(that.overH<that.boxH){
-                    that.box.addClass('iselectTop')
-                }
-                console.log(that.overH,'<=',that.boxH);
-                if (that.showCb)that.showCb()
-            }
-        })
-    },
-    hide: function () {
-        var that = this;
-        that.body.on('click', function (e) {
-            var flag = true;
-            that.ele.parent().find('*').each(function (index, item) {
-                if (item == e.target) {
-                    flag = false;
-                    return
-                }
-            });
-            if (flag) {
-                if (that.ele.hasClass('active')) {
-                    that.ele.removeClass('active');
-                    if (that.hideCb)that.hideCb()
-                }
-            }
-        })
-    },
-    changeContent: function () {
-        this.text = this.ele.find('span');
-        this.row = this.ele.find('ul>li');
-        if (this.content && this.content instanceof Array) {//没有传标题，并且是列表第一个li捕获的结果
-            this.reg.lastIndex = 0;
-            var regs = null;
-            while (regs = this.reg.exec(this.list)) {
-                if (!(regs[1].toLowerCase() == regs[3].toLowerCase() && regs[3].toLowerCase() == 'li')) {//插入的列表中有的不是li标签
-                    console.error('“list”参数错误，不可以插入\<' + regs[1] + '\>标签');
-                }
-            }
-            this.bindEvent?this.text.html(this.row.eq(0).html()):this.text.html(this.content[2]);
-        } else if (typeof this.content == 'string') {
-            this.text.html(this.content);
-        } else {//没有传标题也没有匹配到正确的标签
-            throw new Error('“list”参数错误，需插入以\<li\>为列表的字符串')
-        }
-        var that = this;
-        that.text.attr('title',that.text.html());
-        that.ele.val(this.row.eq(0).val());//方便用jq的val()可以获取到
-        that.ele.attr('value',this.row.eq(0).val());//只是为了显示在控制台元素内，方便查看
-        that.row.on('click', function (e) {
-            that.text.html($(this).html());
-            that.ele.val($(this).val());//方便用jq的val()可以获取到
-            that.ele.attr('value',$(this).attr('value'));//只是为了显示在控制台元素内，方便查看
-            that.text.attr('title',that.text.html());
-            if (that.changeContentCb)that.changeContentCb.call(that.ele,$(this))
-        });
-        this.row.each(function(index,item){
-            if($(item).attr('selected')){
-                that.text.html($(item).html());
-                that.ele.val($(item).val());//方便用jq的val()可以获取到
-                that.ele.attr('value',$(item).attr('value'));//只是为了显示在控制台元素内，方便查看
-            }
-        });
-    },
-    readyStatus: function () {
-        this.ele[0].reset = true;//同一个下拉列表只能绑定一次
-        if (this.ready)this.ready.call(this.ele)
+(function (root, factory) {
+    if (typeof define === 'function' && define.amd) {
+        define(factory);
+    } else if (typeof exports === 'object') {
+        module.exports = factory();
+    } else {
+        root.ISelect = factory();
     }
-};
-/*--------------select*/
+}(this,function(){
+    var ISelect = function (option) {
+        this.ele = option.ele instanceof $?option.ele:$(option.ele);//要替换的下拉框
+        this.select = null;//最外层div
+        this.headBox = null;//头部div
+        this._title = null;//标题p
+        this.list = null;//每一项li
+        this.listBox = null;//li的父级ul
+        this.hideCb = option.hideCb||null;//隐藏回调
+        this.showCb = option.showCb||null;//展示回调
+        this.chooseCb =option.chooseCb|| null;//选择某一项后的回调
+        this.ready = option.ready||null;//初始化回调
+        this.$prop = {//属性对象
+            html: null,//显示的内容和title   改变这个属性,只是改变了显示的内容,并不会影响ISelect下拉框value的变化和原生下拉框的value变化（防止死循环），
+            value: null,//值   改变这个属性  html属性会跟着变化，也就是显示的内容会跟着变化 (value改变后html会跟着变,但是html改变,value不会变)
+            disabled: false//是否禁用
+        };
+        this.body = $('body');
+        this.init();
+        return this
+    };
+    ISelect.prototype = {
+        constructor: ISelect,
+        init: function () {
+            this.create();
+            this.linkage();
+            this.appendDoc();
+            this.toggle();
+            this.choose();
+            this.readyStatus();
+        },
+        create: function () {/*创建*/
+            this.select = $(document.createElement('div')).addClass('select-pull-down');
+            this.headBox = $(document.createElement('div')).addClass('select-down-head');
+            this._title = $(document.createElement('p')).addClass('select-title');
+            var i = $(document.createElement('i')).addClass('select-arrow-down');
+            this.listBox = $(document.createElement('ul')).addClass('select-list-down');
+            this.headBox.append(this._title, i);
+            this.select.append(this.headBox, this.listBox);
+        },
+        appendDoc: function () {/*插入*/
+            var list = this.ele.html(),
+                that = this;
+            list = list.replace(/<(?:option)(.*?)>([\s\S]*?)<\/(?:option)>/ig, function (REG, G1, G2) {
+                return '<' + 'li' + '' + G1 + '>' + G2 + '</' + 'li' + '>'
+            });
+            that.listBox.html(list);
+            that.list = that.listBox.find('li');
+            /*赋值数据*/
+            that.$prop.value = that.getText().value;
+            that.$prop.disabled = that.getText().disabled;
+            /*设置初始显示*/
+            that.select.css({
+                width: that.ele.width(),
+                height: that.ele.height(),
+                lineHeight: that.ele.height() + 'px'
+            });
+            that.ele.hide().before(that.select);
+        },
+        toggle: function () {/*却换动画*/
+            var sBox = this.select,
+                that = this;
+            var selectFn=function (e) {
+                if (that.select.hasClass('disabled'))return;
+                if ($(this).hasClass('active')) {
+                    $(this).removeClass('active');
+                    that.select.removeClass('select-top');
+                    if (that.hideCb)that.hideCb.call(that,e)
+                } else {
+                    $(this).addClass('active');
+                    that.htmlCH = document.documentElement.clientHeight || document.body.clientHeight;
+                    that.htmlST = document.documentElement.scrollTop || document.body.scrollTop;
+                    that.boxH = that.listBox.outerHeight();
+                    that.eleH = sBox.outerHeight();
+                    that.eleT = sBox.offset().top - that.htmlST;
+                    that.overH = that.htmlCH - that.eleH - that.eleT;
+                    if (that.overH < that.boxH) {
+                        that.select.addClass('select-top')
+                    }
+                    //console.log(that.overH,'<=',that.boxH);
+                    if (that.showCb)that.showCb.call(that,e)
+                }
+            };
+            var bodyFn=function (e) {
+                if (that.select.hasClass('disabled'))return;
+                var flag = true;
+                sBox.parent().find('*').each(function (index, item) {
+                    if (item == e.target) {
+                        flag = false;
+                    }
+                });
+                if (flag) {
+                    if (sBox.hasClass('active')) {
+                        sBox.removeClass('active');
+                        if (that.hideCb)that.hideCb.call(that,e)
+                    }
+                }
+            };
+            sBox.off('click',selectFn).on('click',selectFn);
+            that.body.off('click',bodyFn).on('click',bodyFn);
+        },
+        choose: function () {/*选择*/
+            var that = this;
+            that.list.on('click', function (e) {
+                that.$prop.value = $(this).attr('value');
+                if (that.chooseCb)that.chooseCb.call(that, $(this))
+            });
+            that.ele.on('input', function () {
+                var _data = that.getText();
+                that.$prop.value = _data.value;
+            });
+        },
+        getText: function () {//取得原生下拉框内容和值
+            var index = this.ele[0].selectedIndex,
+                _option = this.ele[0].options[index],
+                isDisabled = this.ele.prop('disabled');
+            return {
+                html: _option.innerHTML,
+                value: _option.value,
+                disabled: isDisabled
+            }
+        },
+        setSelect: function (val) {
+            var that = this;
+            //设置value
+            that.select.attr('value', val);
+        },
+        getSelect: function () {//iSelect数据
+            var box = this.select,
+                title = this._title;
+            return {
+                html: title.html(),
+                value: box.attr('value'),
+                disabled: box.hasClass('disabled')
+            }
+        },
+        linkage: function () {
+            var that = this;
+            Object.defineProperties(that.$prop, {
+                'value': {
+                    configurable: true,
+                    enumerable: true,
+                    set: function (val) {
+                        var options=that.ele[0].options,
+                            anyHas= 0;
+                        for(var i=0;i<options.length;i++){
+                            if(options[i].value!=val){
+                                anyHas++
+                            }
+                        }
+                        if(anyHas==options.length){
+                            throw new Error('刷新失败:在下拉项中并未找到value='+val+'的option!')
+                        }
+                        that.ele.val(val);
+                        var html = that.getText().html;
+                        that.setSelect(val);
+                        that.$prop.html = html;
+                        this.newValue = val;
+                    },
+                    get: function () {
+                        return this.newValue
+                    }
+                },
+                'html': {
+                    configurable: true,
+                    enumerable: true,
+                    set: function (viewVal) {
+                        that._title.html(viewVal);//设置显示内容
+                        that.select.attr('title', viewVal);//设置title
+                        this.newHtml = viewVal;
+                    },
+                    get: function () {
+                        return this.newHtml
+                    }
+                },
+                'disabled': {
+                    configurable: true,
+                    enumerable: true,
+                    set: function (val) {
+                        if (val) {
+                            that.select.addClass('disabled');
+                            that.ele.prop('disabled', true);
+                            that.select.hasClass('active') ? that.select.removeClass('active') : null;
+                        } else {
+                            that.select.removeClass('disabled');
+                            that.ele.prop('disabled', false)
+                        }
+                        this.newDisabled = val
+                    },
+                    get: function () {
+                        return this.newDisabled
+                    }
+                }
+            })
+        },
+        watch: function () {/*检查变化*/
+            var data = this.$prop,//标准数据
+                native_data = this.getText(),//原生下拉数据
+                select_data = this.getSelect();//iSelect数据
+            var newData={};
+            for (var key in native_data) {
+                if (data.hasOwnProperty(key)&&key!='html'){//不进行显示内容检测
+                    if (data[key] == native_data[key] && data[key] == select_data[key]) {//都未变化
+                       // console.log('所有数据的属性:'+key+'没有改变','标准:',data[key],'原生:', native_data[key],'iselect:', select_data[key])
+                        newData[key]=data[key]
+                    }else if(data[key]!=native_data[key] && data[key]!=select_data[key]){//都变化了
+                        //console.log('属性:'+key+'都变了,将以原生下拉框为准.','标准:',data[key],'原生:', native_data[key],'iselect:', select_data[key])
+                        newData[key]=native_data[key]//以原生下拉为准
+                    }else if(data[key]!=select_data[key]){//ISelect数据变化了
+                        //console.log('ISelect属性:'+key+'变了,将以ISelect为准.','标准:',data[key],'原生:', native_data[key],'iselect', select_data[key])
+                        newData[key]=select_data[key]
+                    }else if(data[key]!=native_data[key]){//原生下拉框变化了
+                        //console.log('原生下拉框属性:'+key+'变了,将以原生下拉框为准.','标准:',data[key],'原生:', native_data[key],'iselect:', select_data[key])
+                        newData[key]=native_data[key]
+                    }
+                }
+            }
+            return newData
+        },
+        refresh: function () {
+            var newData=this.watch();
+            //console.log('新数据:',newData);
+            for(var key in newData){
+                if(newData.hasOwnProperty(key)){
+                    this.$prop[key]=newData[key]
+                }
+            }
+        },
+        readyStatus: function () {
+            if (this.ready)this.ready.call(this)
+        }
+    };
+    return ISelect
+}))

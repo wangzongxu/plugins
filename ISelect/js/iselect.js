@@ -14,6 +14,7 @@
         this._title = null;//标题p
         this.list = null;//每一项li
         this.listBox = null;//li的父级ul
+        this.useStyle=option.useStyle||false;//继承简单的原生select样式
         this.hideCb = option.hideCb instanceof Function ? option.hideCb : null;//隐藏回调
         this.showCb = option.showCb instanceof Function ? option.showCb : null;//展示回调
         this.chooseCb = option.chooseCb instanceof Function ? option.chooseCb : null;//选择某一项后的回调
@@ -23,6 +24,10 @@
         this.html = null;//显示的内容和title   改变这个属性,只是改变了显示的内容,并不会影响ISelect下拉框value的变化和原生下拉框的value变化（防止死循环），
         this.value = null;//值   改变这个属性  html属性会跟着变化，也就是显示的内容会跟着变化 (value改变后html会跟着变,但是html改变,value不会变)
         this.disabled = false;//是否禁用
+        if(this.ele.multiple){
+           console.warn('暂不支持多选select!');
+           return
+        }
         this.init();
         return this
     };
@@ -64,11 +69,13 @@
             that.value = that.getText().value;
             that.disabled = that.getText().disabled;
             /*设置初始显示*/
-            var nativeStyle = getComputedStyle(that.ele);
-            that.select.style.width = nativeStyle.width;
-            that.select.style.height = nativeStyle.height;
-            that.select.style.lineHeight = nativeStyle.height;
-            // that.ele.style.display = 'none';
+            if(that.useStyle){
+                var nativeStyle = getComputedStyle(that.ele);
+                that.select.style.width = nativeStyle.width;
+                that.select.style.height = nativeStyle.height;
+                that.select.style.lineHeight = nativeStyle.height;
+            }
+            that.ele.style.display = 'none';
             that.ele.parentNode.insertBefore(that.select, that.ele)
         },
         toggle: function () {/*切换动画*/
@@ -79,7 +86,7 @@
                 if (this.classList.contains('active')) {
                     this.classList.remove('active');
                     that.select.classList.remove('select-top');
-                    if (that.hideCb)that.hideCb.call(that, e)
+                    if (that.hideCb)that.hideCb(e)
                 } else {
                     this.classList.add('active');
                     that.htmlCH = document.documentElement.clientHeight || document.body.clientHeight;
@@ -92,7 +99,7 @@
                         that.select.classList.add('select-top')
                     }
                     //console.log(that.overH,'<=',that.boxH);
-                    if (that.showCb)that.showCb.call(that, e)
+                    if (that.showCb)that.showCb(e)
                 }
             }
             that.bodyFn = function (e) {
@@ -108,7 +115,7 @@
                 if (flag) {
                     if (sBox.classList.contains('active')) {
                         sBox.classList.remove('active');
-                        if (that.hideCb)that.hideCb.call(that, e)
+                        if (that.hideCb)that.hideCb(e)
                     }
                 }
             };
@@ -126,7 +133,7 @@
                     }
                     this.setAttribute('selected', '');
                     that.value = this.getAttribute('value');
-                    if (that.chooseCb)that.chooseCb.call(that, this, e)
+                    if (that.chooseCb)that.chooseCb(this, e)
                 }, false);
             }
             that.ele.addEventListener('input', function () {
@@ -261,12 +268,12 @@
             this.select.parentNode.removeChild(this.select);
             this.select.destroy = true;
             if (this.destroyCb) {
-                this.destroyCb.call(this)
+                this.destroyCb()
             }
             ;
         },
         readyStatus: function () {
-            if (this.ready)this.ready.call(this)
+            if (this.ready)this.ready()
         },
         util: {
             offsetTop: function (node) {

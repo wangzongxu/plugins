@@ -24,6 +24,7 @@
         this.html = null;//显示的内容和title   改变这个属性,只是改变了显示的内容,并不会影响ISelect下拉框value的变化和原生下拉框的value变化（防止死循环），
         this.value = null;//值   改变这个属性  html属性会跟着变化，也就是显示的内容会跟着变化 (value改变后html会跟着变,但是html改变,value不会变)
         this.disabled = false;//是否禁用
+        this.$data={};
         if(this.ele.multiple){
            console.warn('暂不支持多选select!');
            return
@@ -168,6 +169,10 @@
         linkage: function () {
             var that = this;
             Object.defineProperties(that, {
+                '$data':{
+                    enumerable:false,
+                    configurable:false
+                },
                 'value': {
                     configurable: true,
                     enumerable: true,
@@ -186,10 +191,10 @@
                         var html = that.getText().html;
                         that.setSelect(val);
                         that.html = html;
-                        this.newValue = val;
+                        that.$data.newValue = val;
                     },
                     get: function () {
-                        return this.newValue
+                        return that.$data.newValue
                     }
                 },
                 'html': {
@@ -198,10 +203,10 @@
                     set: function (viewVal) {
                         that._title.innerHTML = viewVal;//设置显示内容
                         that.select.setAttribute('title', viewVal);//设置title
-                        this.newHtml = viewVal;
+                        that.$data.newHtml = viewVal;
                     },
                     get: function () {
-                        return this.newHtml
+                        return that.$data.newHtml
                     }
                 },
                 'disabled': {
@@ -216,10 +221,10 @@
                             that.select.classList.remove('disabled');
                             that.ele.disabled = false
                         }
-                        this.newDisabled = val
+                        that.$data.newDisabled = val
                     },
                     get: function () {
-                        return this.newDisabled
+                        return that.$data.newDisabled
                     }
                 }
             })
@@ -267,10 +272,10 @@
             this.select.removeEventListener('click', this.showFn, false);
             this.select.parentNode.removeChild(this.select);
             this.select.destroy = true;
+            this.ele.style.display='block';
             if (this.destroyCb) {
                 this.destroyCb()
             }
-            ;
         },
         readyStatus: function () {
             if (this.ready)this.ready()

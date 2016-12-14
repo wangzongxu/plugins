@@ -1,5 +1,5 @@
 ### ISelect下拉插件
-> 对于原生select而言；我们有时候想要自定义下拉框样式；使用这个插件会非常方便修改下拉框样式
+> 对于原生select而言；我们有时候想要自定义下拉框样式；使用这个插件会非常方便修改下拉框样式   
 - 不需依赖jquery
 - 浏览器不兼容：IE 6 7 8 
 
@@ -18,7 +18,7 @@ destroyCb | 销毁后的回调
 refresh | 刷新ISelect
 destroy | 销毁ISelect
 
-> 概要
+> 概要   
 - 当设置ISelect的值或者可选状态的时候，原生的下拉框也会跟着同步变化；所以可以正常获取原生下拉框的值或者进行表单提交
 - 通过实例上的：disabled、value、html来控制是否可选、选中项和显示的文本
 - 所有回调中的this都是实例，hideCb、showCb、chooseCb回调参数中自带MouseEvent （chooseCb回调自带两个参数：当前点击的元素和MouseEvent）

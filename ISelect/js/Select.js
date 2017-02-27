@@ -4,10 +4,10 @@
     } else if (typeof exports === 'object') {
         module.exports = factory();
     } else {
-        root.ISelect = factory();
+        root.Select = factory();
     }
 }(this, function () {
-    var ISelect = function (option) {
+    var Select = function (option) {
         this.ele = (typeof option.ele === 'object') ? option.ele : document.querySelector(option.ele);//要替换的下拉框
         this.select = null;//最外层div
         this.headBox = null;//头部div
@@ -21,7 +21,7 @@
         this.ready = option.ready instanceof Function ? option.ready : null;//初始化回调
         this.destroyCb = option.destroyCb instanceof Function ? option.destroyCb : null;//销毁的回调
         this.body = document.querySelector('body');
-        this.html = null;//显示的内容和title   改变这个属性,只是改变了显示的内容,并不会影响ISelect下拉框value的变化和原生下拉框的value变化（防止死循环），
+        this.html = null;//显示的内容和title   改变这个属性,只是改变了显示的内容,并不会影响Select下拉框value的变化和原生下拉框的value变化（防止死循环），
         this.value = null;//值   改变这个属性  html属性会跟着变化，也就是显示的内容会跟着变化 (value改变后html会跟着变,但是html改变,value不会变)
         this.disabled = false;//是否禁用
         this.$data={};
@@ -32,8 +32,8 @@
         this.init();
         return this
     };
-    ISelect.prototype = {
-        constructor: ISelect,
+    Select.prototype = {
+        constructor: Select,
         init: function () {
             this.create();
             this.linkage();
@@ -157,7 +157,7 @@
             //设置value
             that.select.setAttribute('value', val);
         },
-        getSelect: function () {//iSelect数据
+        getSelect: function () {//Select数据
             var box = this.select,
                 title = this._title;
             return {
@@ -236,21 +236,21 @@
                     disabled: this.disabled
                 },
                 native_data = this.getText(),//原生下拉数据
-                select_data = this.getSelect();//iSelect数据
+                select_data = this.getSelect();//Select数据
             var newData = {};
             for (var key in native_data) {
                 if (data.hasOwnProperty(key) && key != 'html') {//不进行显示内容检测
                     if (data[key] == native_data[key] && data[key] == select_data[key]) {//都未变化
-                        //console.log('所有数据的属性:'+key+'没有改变','标准:',data[key],'原生:', native_data[key],'iselect:', select_data[key])
+                        //console.log('所有数据的属性:'+key+'没有改变','标准:',data[key],'原生:', native_data[key],'Select:', select_data[key])
                         newData[key] = data[key]
                     } else if (data[key] != native_data[key] && data[key] != select_data[key]) {//都变化了
-                        // console.log('属性:'+key+'都变了,将以原生下拉框为准.','标准:',data[key],'原生:', native_data[key],'iselect:', select_data[key])
+                        // console.log('属性:'+key+'都变了,将以原生下拉框为准.','标准:',data[key],'原生:', native_data[key],'Select:', select_data[key])
                         newData[key] = native_data[key]//以原生下拉为准
-                    } else if (data[key] != select_data[key]) {//ISelect数据变化了
-                        //console.log('ISelect属性:'+key+'变了,将以ISelect为准.','标准:',data[key],'原生:', native_data[key],'iselect', select_data[key])
+                    } else if (data[key] != select_data[key]) {//Select数据变化了
+                        //console.log('Select属性:'+key+'变了,将以Select为准.','标准:',data[key],'原生:', native_data[key],'Select', select_data[key])
                         newData[key] = select_data[key]
                     } else if (data[key] != native_data[key]) {//原生下拉框变化了
-                        //console.log('原生下拉框属性:'+key+'变了,将以原生下拉框为准.','标准:',data[key],'原生:', native_data[key],'iselect:', select_data[key])
+                        //console.log('原生下拉框属性:'+key+'变了,将以原生下拉框为准.','标准:',data[key],'原生:', native_data[key],'Select:', select_data[key])
                         newData[key] = native_data[key]
                     }
                 }
@@ -293,5 +293,5 @@
             }
         }
     };
-    return ISelect
+    return Select
 }))

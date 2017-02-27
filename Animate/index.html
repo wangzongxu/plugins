@@ -3,23 +3,47 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="keywords" content="animate animate.js Promise动画 js动画库">
+  <meta name="description" content="animate.js过渡动画，支持IE5+；支持Promise语法">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>Animate</title>
   <style type="text/css">
+
+    @keyframes sport {
+        0% {
+            transform: translateX(0);
+        }
+        25%{
+          transform: translateX(30px);
+        }
+        50%{
+          transform: translateX(0);
+        }
+        75%{
+          transform: translateX(-30px);
+        }
+        100% {
+            transform: translateX(0);
+        }
+    }
+    #title.sport{
+      animation: sport .5s linear infinite
+    }
     .container{ width: 900px; height: 200px; position: absolute; left: 0; top: 0; right:0; bottom:0; margin: auto; border: 1px solid purple; border-radius: 20px; }
-    .title{ position: absolute; left: 0; right:0; top: -150px; text-align: center; user-select: none; font-weight: 500; background-image: -webkit-linear-gradient(92deg,yellow,orange); -webkit-background-clip: text; color: transparent; font-size: 50px; }
+    #title{ position: absolute; left: 0; right:0; top: -150px; text-align: center; user-select: none; font-weight: 500; background-image: -webkit-linear-gradient(92deg,yellow,orange); -webkit-background-clip: text; color: transparent; font-size: 50px; }
     .box{ position: absolute; width: 100%; height: 160px; top: 0; left: 0; border-bottom: 1px solid purple; }
-    #effectContainer,#durationContainer,#stepContainer{ position: absolute; left:10px; bottom:10px; }
+    #effectContainer,#durationContainer,#stepContainer,#download{ position: absolute; left:10px; bottom:10px; }
     #durationContainer{ left:250px; }
     #stepContainer{ left:395px; }
     #duration,#step{ width: 50px; }
+    #download{left:550px}
     #font{ user-select: none; background-image: -webkit-linear-gradient(92deg,orange,yellow); -webkit-background-clip: text; color: transparent; font-size: 30px; position: absolute; left:20px; top: 50px }
     input[type=button]{ position: absolute; right:20px; bottom:9px; width: 70px; }
   </style>
 </head>
 <body>
   <div class="container">
-    <h1 class="title">Animate.js</h1>
+    <h1 class="title" id="title">Animate.js</h1>
     <div class="box">
       <div id="font">
           Animate
@@ -66,18 +90,27 @@
     <div id="stepContainer">频率/ms:
       <input type="number" value="15" id="step">
     </div>
+    <div id="download"><a href="https://github.com/wangzongxu/plugins/tree/master/Animate">Download</a></div>
     <input type="button" id="Go" value="Go">
   </div>
 </body>
 </html>
-<script type="text/javascript" src="./Animate.js"></script>
+<script type="text/javascript" src="./js/Animate.min.js"></script>
 <script type="text/javascript">
 
 var action=document.getElementById('Go'),
         step=document.getElementById('step'),
         effect=document.getElementById('effect'),
         duration=document.getElementById('duration'),
-        ele=document.getElementById('font');
+        ele=document.getElementById('font'),
+        title=document.getElementById('title');
+
+title.onmouseover=function(){
+  this.className='title sport'
+}
+title.onmouseout=function(){
+  this.className='title'
+}
 
 var font=new Animate(ele);
 action.onclick= function () {

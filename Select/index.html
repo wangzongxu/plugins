@@ -12,6 +12,27 @@
             width: 100%;
             height: 100%;
             font-size: 12px;
+            background-color: beige
+        }
+        .select-wrap-box{
+          width: 400px;
+          height: 200px;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          position: absolute;
+          top: 0;
+          left: 0;
+          right:0;
+          bottom:0;
+          margin: auto;
+        }
+        .select-wrap-box button{
+          margin-bottom: 30px;
+          width: 70px;
+          height: 30px;
+          border-radius: 10px;
+          background-color: rgba(0, 128, 28, 0.71)
         }
     </style>
     <link rel="stylesheet" type="text/css" href="css/Select.css"/>
@@ -20,23 +41,23 @@
 
 
 <div class="select-wrap-box">
-    <button style="width: 100px;height: 30px;background-color: deepskyblue" id="btn">解除</button>
-    <button style="width: 100px;height: 30px;background-color: deepskyblue" id="stop">禁用</button>
-    <button style="width: 100px;height: 30px;background-color: deepskyblue" id="three">设置值为3</button>
-    <button style="width: 100px;height: 30px;background-color: deepskyblue" id="destroy">销毁</button>
-    <button style="width: 100px;height: 30px;background-color: deepskyblue" id="refresh">刷新</button>
-
+  <div>
+    <button id="btn">解除</button>
+    <button id="stop">禁用</button>
+    <button id="three">设置值为3</button>
+    <button id="destroy">销毁</button>
+    <button id="refresh">刷新</button>
+  </div>
     <select class="select"  name="" id="category" style="width: 200px;height: 37px;">
-        <option value="1">一</option>
+        <option value="1" selected>一</option>
         <option value="2">二</option>
-        <option value="3" selected>三</option>
+        <option value="3">三</option>
         <option value="4">四</option>
         <option value="5">五</option>
     </select>
 </div>
 
 </body>
-<!--<script src="js/Select.js" language="JavaScript" charset="utf-8"></script>-->
 <script src="js/Select.js" language="JavaScript" charset="utf-8"></script>
 <script language="JavaScript">
 // Select 不需依赖JQ

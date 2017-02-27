@@ -1,5 +1,5 @@
 ### Animate JS动画库
-> JS实现的帧动画库，包含31中动态效果，支持Promise链式调用;兼容IE5+
+> JS实现的帧动画库，包含31中动态效果，兼容IE5+,支持Promise链式调用(其中catch方法更名为_catch,因为低版本IE会报错)
 
 #### demo:  
 

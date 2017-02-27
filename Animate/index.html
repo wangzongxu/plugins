@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+  <style>
+    div{
+      width: 100px;
+      height: 100px;
+      background-color: purple;
+      position: fixed;
+      left:0;
+      top:0
+    }
+  </style>
+</head>
+<body>
+  <div id="div">
+
+  </div>
+</body>
+</html>
+<script src="./Animate.js"></script>
+<script>
+
+var an=new Animate(document.getElementById('div'));
+
+an.go({
+  target:{
+    left:'100px',
+    top:100
+  },
+  effect:3
+}).then(function(data){
+  console.log(1,data)
+  return an.go({
+    target:{
+      left:30,
+      top:100
+    },
+    effect:7
+  })
+}).then(function(data){
+  console.log(2,data)
+  return '2222222222'
+}).then(function(data){
+  console.log(3,data)
+  return an.go({
+    target:{
+      left:200,
+      top:50
+    },
+    effect:9
+  })
+})._catch(function (err) {
+  console.log(err)
+})
+
+</script>

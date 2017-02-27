@@ -297,19 +297,19 @@
         this.error = function () {};
         this.task = [];
         var that = this;
-        setTimeout(function () {/*要在then后边执行，否则task中还没有添加进去方法*/
+        setTimeout(function () {
             cb(function (data) {
                 var fn = that.task.shift();
-                if(typeof fn === 'undefined'){/*最后一个回调*/
+                if(typeof fn === 'undefined'){
                     return
                 }
                 var isPm = fn(data);
-                if (isPm instanceof Pm) {/*返回新的promise，将之前所有的resolve状态都放到新的里边用于向后传递*/
+                if (isPm instanceof Pm) {
                     for(var i in that.task){
                         isPm.task.push(that.task[i]);
                     }
-                    isPm.error=that.error;/*将reject也向后传递*/
-                } else {/*不是返回的promise，直接调用下一个resolve*/
+                    isPm.error=that.error;
+                } else {
                     fn = that.task.shift();
                     fn && fn(isPm)
                 }

@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+        content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no"/>
+    <meta name="apple-mobile-web-app-capable" content="yes"/>
+    <meta name="apple-mobile-web-app-status-bar-style" content="black"/>
+    <title>Drag</title>
+    <style type='text/css'>
+        * {
+            margin: 0;
+            padding: 0
+        }
+
+        #box {
+          margin:  10px;
+            width: 100px;
+            height: 100px;
+            padding: 20px;
+            background-color: purple
+        }
+
+        #par {
+            width: 600px;
+            height: 400px;
+            margin: 100px 0 0 100px;
+            border: 1px solid blue
+        }
+
+        #par2 {
+            width: 500px;
+            height: 300px;
+            margin: 10px 0 0 10px;
+            border: 1px solid blue
+        }
+    </style>
+</head>
+
+<body>
+    <div id='par'>
+        <div id="par2">
+            <div id="box"></div>
+        </div>
+    </div>
+</body>
+<script src="./js/Drag.js"></script>
+<script type="text/javascript">
+
+    var d = new Drag({
+        ele: document.querySelector('#box'),
+        scopeLimit: document.querySelector('#par2'), //默认 false 可选：screen(整个屏幕)
+        horizontal: false, //默认 false
+        vertical: false, //默认 false
+        dragStart: function() {
+          console.log('start')
+        },
+        draging: function() {
+          // console.log(
+          //   this.currentY,
+          //   this.currentX,
+          //   this.width,
+          //   this.height
+          // )
+        },
+        dragEnd: function() {
+          console.log('end')
+        }
+    })
+    console.log(d)
+    setTimeout(function(){
+      d.scopeLimit=document.querySelector('#par')
+    },5000)
+</script>
+
+</html>

@@ -10,16 +10,16 @@
 })('Drag', function() {
     function Drag(option) {
         var config = {
-            horizontal: false,
+            horizontal: true,
             scopeLimit: false,
-            vertical: false
+            vertical: true
         }
         if (!option.ele) {
             throw new Error('未找到目标元素')
         }
         this.extend(config, option);
         this.extend(this, config);
-        this.ele.style.position = 'fixed';
+        this.ele.style.position = 'absolute';
         this.ele.style.margin=0
         this.init();
         return this
@@ -37,10 +37,10 @@
             this.minY = -9999;
             this.maxX = 9999;
             this.maxY = 9999;
-            this.currentX = '';
-            this.currentY = '';
-            this.width = '';
-            this.height = '';
+            this.currentX = null;
+            this.currentY = null;
+            this.width = null;
+            this.height = null;
             this.ele.ISDRAG = true;
             this.ONMOUSEDOWN = 'mousedown';
             this.ONMOUSEMOVE = 'mousemove';
@@ -56,18 +56,25 @@
             if (!this.scopeLimit) {
                 return
             }
-            if (this.scopeLimit == 'screen') {
-                this.minX = 0;
-                this.minY = 0;
-                this.maxX = (document.documentElement.clientWidth || document.body.clientWidth) - this.ele.offsetWidth;
-                this.maxY = (document.documentElement.clientHeight || document.body.clientHeight) - this.ele.offsetHeight;
+            if (this.scopeLimit == 'screen') {//限制全屏幕
+                this.minX = 0-this.offset(this.ele.offsetParent).l;
+                this.minY = 0-this.offset(this.ele.offsetParent).t;
+                this.maxX = (document.documentElement.clientWidth || document.body.clientWidth) - this.ele.offsetWidth - this.offset(this.ele.offsetParent).l;
+                this.maxY = (document.documentElement.clientHeight || document.body.clientHeight) - this.ele.offsetHeight - this.offset(this.ele.offsetParent).t;
             } else if (this.scopeLimit.tagName) {
                 var par = this.scopeLimit;
                 if (this.isParent(this.ele, par)) {
-                    this.minX = this.offset(par).l;
-                    this.minY = this.offset(par).t;
+                  if(par==this.ele.offsetParent){//定位元素和限制元素一样
+                    this.minX = 0;
+                    this.minY = 0;
                     this.maxX = par.offsetWidth + this.minX - this.ele.offsetWidth;
                     this.maxY = par.offsetHeight + this.minY - this.ele.offsetHeight;
+                  }else{///定位元素和限制元素不一样
+                    this.minX = 0 - (this.offset(this.ele.offsetParent).l-this.offset(par).l);
+                    this.minY = 0 - (this.offset(this.ele.offsetParent).t-this.offset(par).t);
+                    this.maxX = par.offsetWidth + this.minX - this.ele.offsetWidth;
+                    this.maxY = par.offsetHeight + this.minY - this.ele.offsetHeight;
+                  }
                 } else {
                     console.warn('限制元素和目标元素没有后代关系')
                 }
@@ -78,8 +85,8 @@
         start: function(e) {
             if(this.testMultipleFingers(e))return;
             if(this.isMobile){
-              e.pageX = e.changedTouches[0].pageX;
-              e.pageY = e.changedTouches[0].pageY;
+              e.pageX = e.touches[0].pageX;
+              e.pageY = e.touches[0].pageY;
             }
             this.x = this.offset(this.ele).l;
             this.y = this.offset(this.ele).t;
@@ -92,12 +99,12 @@
         drag: function(e) {
             if(this.testMultipleFingers(e))return;
             if(this.isMobile){
-              e.pageX = e.changedTouches[0].pageX;
-              e.pageY = e.changedTouches[0].pageY;
+              e.pageX = e.touches[0].pageX;
+              e.pageY = e.touches[0].pageY;
             }
             this.limit();
-            var curX = e.pageX - this.mx + this.x;
-            var curY = e.pageY - this.my + this.y;
+            var curX = e.pageX - this.mx + this.x - this.offset(this.ele.offsetParent).l;
+            var curY = e.pageY - this.my + this.y - this.offset(this.ele.offsetParent).t;
             if (this.scopeLimit) {
                 curX = curX < this.minX ? this.minX : curX;
                 curX = curX > this.maxX ? this.maxX : curX;
@@ -108,16 +115,14 @@
             this.currentY=curY;
             this.width = this.ele.offsetWidth;
             this.height = this.ele.offsetHeight;
-            if (!this.vertical) {
+            this.offsetParent = this.ele.offsetParent;//readonly
+            if (this.vertical) {
                 this.ele.style.top = curY + 'px';
             }
-            if (!this.horizontal) {
+            if (this.horizontal) {
                 this.ele.style.left = curX + 'px';
             }
             this.draging && this.draging.call(this, e);
-            if (this.horizontal && this.vertical) {
-                console.warn('元素移动被限制')
-            }
         },
         end: function(e) {
             if(this.testMultipleFingers(e))return;
@@ -169,7 +174,7 @@
             }
         },
         testMultipleFingers:function(e){
-          if(e.changedTouches && e.changedTouches.length>1){
+          if(e.touches && e.touches.length>1){
             return true
           }
             return false

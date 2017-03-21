@@ -15,6 +15,8 @@
             padding: 0
         }
         body,html{
+          width: 100%;
+          overflow: auto;
           height: 500%
         }
         #box {
@@ -25,16 +27,15 @@
         }
 
         #par {
-
-            width: 600px;
-            height: 400px;
+            width: 70%;
+            height: 3%;
             margin: 100px 0 0 100px;
             border: 1px solid blue
         }
 
         #par2 {
-            width: 500px;
-            height: 300px;
+            width: 70%;
+            height: 70%;
             margin: 10px 0 0 10px;
             border: 1px solid blue
         }
@@ -52,35 +53,21 @@
 <script type="text/javascript">
 
     var d = new Drag({
-        ele: document.querySelector('#box'),//拖拽目标元素
-        scopeLimit: document.querySelector('#par2'), //拖动范围：默认：false无限制
-                                                    //可选：'screen'(整个屏幕) [Element]任何一个父级元素
-                                  //[Object]参数以拖拽元素的定位元素为准,即:ele.offsetParent,
-                                  //{minX:横向最小值,minY:竖向最小值,maxX:横向最大值,maxY:最大下边距}
-        horizontal: true, //默认 true 是否允许横向拖拽
-        vertical: true, //默认 true  是否允许纵向拖拽
-        dragStart: function(e) {//拖拽开始事件this=>实例
+        ele: document.querySelector('#box'),
+        scopeLimit: 'screen',
+        horizontal: true,
+        vertical: true,
+        dragStart: function(e) {
           console.log('start')
         },
-        draging: function(e) {//拖拽中持续触发的事件this=>实例
+        draging: function(e) {
           console.log('draging')
         },
-        dragEnd: function(e) {//拖拽结束事件this=>实例
+        dragEnd: function(e) {
           console.log('end')
         }
     })
     console.log(d)
-    /*实例：d
-    *d.currentX移动中的当前X坐标位置(只读)
-    *d.currentY移动中的当前Y坐标位置(只读)
-    *d.width当前元素宽度(只读)
-    *d.height当前元素高度(只读)
-    *D.scopeLimit限制参数（可写）
-    *d.minX当前X轴被限制的最小值(由限制参数计算得出，只读参数)
-    *d.maxX当前X轴被限制的最大值(由限制参数计算得出，只读参数)
-    *d.minY当前Y轴被限制的最小值(由限制参数计算得出，只读参数)
-    *d.minY当前Y轴被限制的最小值(由限制参数计算得出，只读参数)
-    */
     setTimeout(function(){
       d.scopeLimit=document.querySelector('#par')
     },5000)

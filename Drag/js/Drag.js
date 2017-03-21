@@ -83,6 +83,7 @@
             }
         },
         start: function(e) {
+            e.preventDefault();
             if(this.testMultipleFingers(e))return;
             if(this.isMobile){
               e.pageX = e.touches[0].pageX;
@@ -167,7 +168,7 @@
         },
         testBrowser: function() {
             if (/Mobile/.test(navigator.userAgent)) {
-                this.ONMOUSEDOWM = 'touchstart';
+                this.ONMOUSEDOWN = 'touchstart';
                 this.ONMOUSEMOVE = 'touchmove';
                 this.ONMOUSEUP = 'touchend';
                 this.isMobile=true

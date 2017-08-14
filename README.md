@@ -10,3 +10,7 @@
 > Drag  
 
 - 拖拽插件 [Drag](https://wangzongxu.github.io/plugins/Drag)拖拽插件，兼容pc和移动，方便控制移动范围
+
+> Book
+
+- 一个vue的翻书组件

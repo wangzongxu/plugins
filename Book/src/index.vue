@@ -332,6 +332,7 @@
     box-sizing: border-box;
     border-radius: 10px;
     position: relative;
+    perspective:1500px;
   }
   .bookMain .bookItem{
     width: 50%;
@@ -427,21 +428,21 @@
   @keyframes right-hidden {
     0% { /*  动画开始 */
       opacity: 1;
-      transform: rotateY(0deg) skewY(0deg);
+      transform: rotate3d(0, 1, 0, 0deg) skewY(0deg);
     }
     50% {
       opacity: 1;
       box-shadow: 0px 0px 20px #333333;
-      transform: rotateY(-90deg) skewY(10deg);
+      transform: rotate3d(0, 1, 0, 90deg) skewY(10deg);
     }
     50.1% {
       opacity: 0;
-      transform: rotateY(-90deg) skewY(10deg);
+      transform: rotate3d(0, 1, 0, 90deg) skewY(10deg);
     }
     100% { /*  动画结束 */
       opacity: 0;
       box-shadow: none;
-      transform: rotateY(-180deg) skewY(0deg);
+      transform: rotate3d(0, 1, 0, 180deg) skewY(0deg);
     }
   }
 
@@ -449,21 +450,21 @@
   @keyframes right-visible {
     0% { /*  动画开始 */
       opacity: 0;
-      transform: rotateY(0deg) skewY(0deg);
+      transform: rotate3d(0, 1, 0, 0deg) skewY(0deg);
     }
     50% {
       opacity: 0;
       box-shadow: 0px 0px 20px #333333;
-      transform: rotateY(-90deg) skewY(10deg);
+      transform: rotate3d(0, 1, 0, 90deg) skewY(10deg);
     }
     50.1% {
       opacity: 1;
-      transform: rotateY(-90deg) skewY(10deg);
+      transform: rotate3d(0, 1, 0, 90deg) skewY(10deg);
     }
     100% { /*  动画结束 */
       opacity: 1;
       box-shadow: none;
-      transform: rotateY(-180deg) skewY(0deg);
+      transform: rotate3d(0, 1, 0, 180deg)  skewY(0deg);
     }
   }
 
@@ -471,21 +472,21 @@
   @keyframes left-hidden {
     0% { /*  动画开始 */
       opacity: 1;
-      transform: rotateY(0deg) skewY(0deg);
+      transform: rotate3d(0, 1, 0, 0deg) skewY(0deg);
     }
     50% {
       opacity: 1;
       box-shadow: 0px 0px 20px #333333;
-      transform: rotateY(-90deg) skewY(-10deg);
+      transform: rotate3d(0, 1, 0, -90deg) skewY(-10deg);
     }
     50.1% {
       opacity: 0;
-      transform: rotateY(-90deg) skewY(-10deg);
+      transform: rotate3d(0, 1, 0, -90deg) skewY(-10deg);
     }
     100% { /*  动画结束 */
       opacity: 0;
       box-shadow: none;
-      transform: rotateY(-180deg) skewY(0deg);
+      transform: rotate3d(0, 1, 0, -180deg) skewY(0deg);
     }
   }
 
@@ -493,21 +494,21 @@
   @keyframes left-visible {
     0% { /*  动画开始 */
       opacity: 0;
-      transform: rotateY(0deg) skewY(0deg);
+      transform: rotate3d(0, 1, 0, 0deg) skewY(0deg);
     }
     50% {
       opacity: 0;
       box-shadow: 0px 0px 20px #333333;
-      transform: rotateY(-90deg) skewY(-10deg);
+      transform: rotate3d(0, 1, 0, -90deg) skewY(-10deg);
     }
     50.1% {
       opacity: 1;
-      transform: rotateY(-90deg) skewY(-10deg);
+      transform: rotate3d(0, 1, 0, -90deg) skewY(-10deg);
     }
     100% { /*  动画结束 */
       opacity: 1;
       box-shadow: none;
-      transform: rotateY(-180deg) skewY(0deg);
+      transform: rotate3d(0, 1, 0, -180deg) skewY(0deg);
     }
   }
 

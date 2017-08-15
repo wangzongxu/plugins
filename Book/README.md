@@ -7,7 +7,7 @@
 ### template:
 
 ```html
-   <book :data="pages">
+   <book :data="pages" ref="book">
      <template scope="prop">
        <img :src="prop.page.url">
        <p>{{ prop.page.title }}</p>
@@ -44,10 +44,19 @@ readRight | 阅读右侧书页时触发（仅在自动翻页时有效 | 见下
 
 - EventParams
 
-```json
+```js
   [
      0: 当前页（按整个页面计算，从1开始）
      1: 某个半页（从数据索引0开始）
      2: 当前数据
    ]
+```
+
+### Methods
+
+```js
+// 向下翻页，默认一页，可指定页数
+this.$refs.book.next(num)
+// 向上翻页，默认一页，可指定页数
+this.$refs.book.prev(num)
 ```

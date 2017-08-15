@@ -5,7 +5,7 @@
     <div v-for="page, index in pages"
          class="bookItem"
          ref="bookItem"
-         @click="turn(page, index)"
+         @click="turn(index)"
          :class="[{rotate180 : page.rotate180},
                      page.left ? 'left' : 'right',
                      page.animateClass]"
@@ -224,7 +224,7 @@
         }
       },
       // 翻页
-      turn (page, index) {
+      turn (index) {
         if (!this.turnPageByHand) return
         if (index % 2 === 0) {
           this.prev()
@@ -233,26 +233,32 @@
         }
       },
       // 上一页
-      prev () {
+      prev (num) {
+        num = this.roundNum(num)
+        if (isNaN(num) || num < 1) return
         if (this.animating) return
-        if (this.curPage <= 1) {
-          return
-        }
+        if (this.curPage - num < 1) return
+        // 改变方向
         this.direction = TURNTORIGHT
         this.$emit('turnStart', this.curPage, this.curHalfPage, this.data[this.curHalfPage])
-        this.curPage --
+        this.curPage -= num
         this.$emit('prev', this.curPage, this.curHalfPage, this.data[this.curHalfPage])
       },
       // 下一页
-      next () {
+      next (num) {
+        num = this.roundNum(num)
+        if (isNaN(num) || num < 1) return
         if (this.animating) return
-        if (this.curPage >= this.pageCount) {
-          return
-        }
+        if (this.curPage + num > this.pageCount) return
+        // 改变方向
         this.direction = TURNTOLEFT
         this.$emit('turnStart', this.curPage, this.curHalfPage, this.data[this.curHalfPage])
-        this.curPage ++
+        this.curPage += num
         this.$emit('next', this.curPage, this.curHalfPage, this.data[this.curHalfPage])
+      },
+      // 数字四舍五入
+      roundNum (any) {
+        return Math.round(any || 1)
       },
       // 停留当前页
       stay (index) {

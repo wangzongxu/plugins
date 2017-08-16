@@ -3,7 +3,6 @@
   "description": "a flip book plugin for vue",
   "version": "1.0.0",
   "author": "wangzongxu.github.io",
-  "private": true,
   "main": "book/index.js",
   "scripts": {
     "dev": "cross-env NODE_ENV=development webpack-dev-server --open --hot",

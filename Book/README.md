@@ -1,8 +1,14 @@
 # README:
 
-> vue >= version 2.1
+## demo preview
+
+<img src="https://wangzongxu.github.io/img-cache/book/book.png" width="600" alt="" align="center"/>
+
+[预览](https://wangzongxu.github.io/plugins/Book/)
 
 ### install
+
+> vue >= version 2.1
 
 ```bash
 npm install vue-book-component --save

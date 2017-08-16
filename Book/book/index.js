@@ -1,6 +1,5 @@
-import book from './book.vue'
-export default {
-  install (Vue) {
-    Vue.component('book', book)
-  }
+var book = require('./book.vue')
+book.install = function (Vue) {
+  Vue.component(book.name, book)
 }
+module.exports = book

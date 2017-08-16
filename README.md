@@ -13,4 +13,4 @@
 
 > Book
 
-- 一个vue的翻书组件
+- 一个vue的翻书组件[Book](https://wangzongxu.github.io/plugins/Book/)

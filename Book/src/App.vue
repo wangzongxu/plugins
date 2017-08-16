@@ -21,14 +21,14 @@ export default {
   data () {
     return {
       pages: [
-        {url: 'https://teacher-media.vipkid.com.cn/resource/725e4f6996864cbf9ff62d8c8cdaa57c.jpg', title: ''},
-        {url: 'https://teacher-media.vipkid.com.cn/resource/225e48a8200a48758dbfdd3b857fc0c2.jpg', title: ''},
-        {url: 'https://teacher-media.vipkid.com.cn/resource/23f0e55129cb4848a1be391099c6911a.jpg', title: 'The lake was home to many animals.↵Frogs and turtles were living in the pond.'},
-        {url: 'https://teacher-media.vipkid.com.cn/resource/6e19087b9fc44299b371fcc8d8e9e544.jpg', title: 'Some turtles were resting on logs.↵Some frogs were waiting on water lilies for flies to catch.'},
-        {url: 'https://teacher-media.vipkid.com.cn/resource/107312050efc46f1afc50ef1b4670410.jpg', title: 'Two, small ears were moving slowly in the water.'},
-        {url: 'https://teacher-media.vipkid.com.cn/resource/3d481cb972224293a109764426a5c71e.jpg', title: 'All of a sudden a huge mouth appeared with big tusks.'},
-        {url: 'https://teacher-media.vipkid.com.cn/resource/146a51c95d214e2187125745fd71858e.jpg', title: 'A hippo was coming up for air.↵Her calf was coming up, too.'},
-        {url: 'https://teacher-media.vipkid.com.cn/resource/73a86331721d454a928b3cdc524d652d.jpg', title: ''}
+        {url: 'https://wangzongxu.github.io/img-cache/book/book-page-1.jpg', title: ''},
+        {url: 'https://wangzongxu.github.io/img-cache/book/book-page-2.jpg', title: ''},
+        {url: 'https://wangzongxu.github.io/img-cache/book/book-page-3.jpg', title: 'The lake was home to many animals.↵Frogs and turtles were living in the pond.'},
+        {url: 'https://wangzongxu.github.io/img-cache/book/book-page-4.jpg', title: 'Some turtles were resting on logs.↵Some frogs were waiting on water lilies for flies to catch.'},
+        {url: 'https://wangzongxu.github.io/img-cache/book/book-page-5.jpg', title: 'Two, small ears were moving slowly in the water.'},
+        {url: 'https://wangzongxu.github.io/img-cache/book/book-page-6.jpg', title: 'All of a sudden a huge mouth appeared with big tusks.'},
+        {url: 'https://wangzongxu.github.io/img-cache/book/book-page-7.jpg', title: 'A hippo was coming up for air.↵Her calf was coming up, too.'},
+        {url: 'https://wangzongxu.github.io/img-cache/book/book-page-8.jpeg', title: ''}
       ]
     }
   },

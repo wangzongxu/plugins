@@ -1,7 +1,7 @@
 {
   "name": "vue-book-component",
   "description": "a flip book plugin for vue",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "author": "wangzongxu.github.io",
   "main": "book/index.js",
   "scripts": {

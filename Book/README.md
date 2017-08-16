@@ -2,12 +2,25 @@
 
 > vue >= version 2.1
 
-## demo
+### install
+
+```bash
+npm install vue-book-component --save
+```
+
+### require
+
+```js
+import Vue from 'vue'
+import Book from 'vue-book-component'
+Vue.use(Book)
+```
 
 ### template:
 
 ```html
-   <book :data="pages" ref="book">
+   <book :data="pages"
+         ref="book">
      <template scope="prop">
        <img :src="prop.page.url">
        <p>{{ prop.page.title }}</p>
@@ -19,16 +32,17 @@
 
 prop | desc | type | default | required
 ---|------|------|------|---
-width | 书整体宽度 | Number | 600 | false
-height | 书整体高度 | Number | 350 | true
+width | 书整体宽度 | String | 600px | false
+height | 书整体高度 | String | 350px | false
 data | 书页数据 | Array | [x] | true
 turnPageByHand | 是否允许手动翻页 | Boolean | true | false
-initPage | 出初始页码 | Number | 1 | false
+initPage | 初始页码 | Number | 1 | false
 autoNextPage | 自动翻页 | Boolean | false | false
 duration |  翻页动画时间 | Number | 1000ms | false
-autoNextPageDelayTime | 左半页和右半页的的等待时间，左半页等待完成后等待右半页，右半页等待完后进行翻页 | Number | 3000 | false
+autoNextPageDelayTime | 每个索引页的延迟时间[一个页面分为左右两个索引页] | Number | 3000 | false
 showPageIndex | 是否显示页码 | Boolean | true | false
-hidePageIndex | 需要隐藏某些半页面的页码 | Array | [] | false
+startPageIndex | 开始显示索引的页面[索引页] | Number | 0 | false
+endPageIndex | 结束显示索引的页面[索引页] | Number | 9999 | false
 
 ### Events:
 
@@ -40,16 +54,17 @@ turnStart | 开始翻页动画时触发 | 见下
 turnEnd | 动画结束后触发 | 见下
 next | 进行下一页时触发 | 见下
 prev | 进行上一页时触发 | 见下
-readRight | 阅读右侧书页时触发（仅在自动翻页时有效 | 见下
+indexPageChange | 每个索引页改变触发 | 当前索引页
 
 - EventParams
 
 ```js
-  [
+  // arguments:
+  {
      0: 当前页（按整个页面计算，从1开始）
-     1: 某个半页（从数据索引0开始）
-     2: 当前数据
-   ]
+     1: 当前两个索引页（一个页面分为左右两个索引页，从0开始）
+     2: 当前两个索引页的数据
+  }
 ```
 
 ### Methods

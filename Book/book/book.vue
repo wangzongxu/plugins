@@ -1,7 +1,7 @@
 <template>
   <div class="bookMain"
-       :style="{width: width + 'px',
-                height: height + 'px'}">
+       :style="{width: width,
+                height: height}">
     <div v-for="page, index in pages"
          class="bookItem"
          ref="bookItem"
@@ -14,9 +14,9 @@
       <slot :page="page"
             :index="index">
       </slot>
-      <i v-if="showPageIndex && hidePageIndex.indexOf(index) === -1"
+      <i v-if="showPageIndex && startPageIndex <= index && endPageIndex >= index"
          class="index"
-         :class="index % 2 === 0 ? 'index-left' : 'index-right'">{{ index + 1 }}
+         :class="index % 2 === 0 ? 'index-left' : 'index-right'">{{ index + 1 - startPageIndex }}
       </i>
     </div>
     <template v-if="pages.length === 0">
@@ -43,14 +43,15 @@
   const HIDDEN = 'hidden'
   const VISIBLE = 'visible'
   export default {
+    name: 'book',
     props: {
       width: {
-        type: Number,
-        default: 600
+        type: String,
+        default: '600px'
       },
       height: {
-        type: Number,
-        default: 350
+        type: String,
+        default: '350px'
       },
       // 页面数据
       data: {
@@ -87,12 +88,15 @@
         type: Boolean,
         default: true
       },
-      // 隐藏页码的数组[0, 10]
-      hidePageIndex: {
-        type: Array,
-        default () {
-          return []
-        }
+      // 页码开始索引
+      startPageIndex: {
+        type: Number,
+        default: 0
+      },
+      // 页码结束索引
+      endPageIndex: {
+        type: Number,
+        default: 9999
       }
     },
     data () {
@@ -112,21 +116,37 @@
       }
     },
     methods: {
+      assign (obj, target) {
+        for (let k in target) {
+          if (target.hasOwnProperty(k)) {
+            obj[k] = target[k]
+          }
+        }
+        return obj
+      },
+      $$emit (type) {
+        let leftPage = this.curPage * 2 - 1 - 1
+        let rightPage = this.data[leftPage + 1] ? leftPage + 1 : undefined
+        this.$emit(type, this.curPage, [leftPage, rightPage], [this.data[leftPage], this.data[rightPage]])
+      },
       // 处理所有页面
       getPages () {
         // 初始化数据
-        this.pages = this.data.map((item, index) => {
-          item.animateClass = ''
-          item.rotate180 = false
-          item.animationDuration = '0s'
+        const pages = []
+        this.data.forEach((item, index) => {
+          let page = this.assign({
+            animateClass: '',
+            rotate180: false,
+            animationDuration: '0s',
+            left: false
+          }, item)
           // 当前页之前的都在左边
           if (index <= this.curPage * 2 - 1 - 1) {
-            item.left = true
-            return item
+            page.left = true
           }
-          item.left = false
-          return item
+          pages.push(page)
         })
+        this.pages = pages
         if (this.autoNextPage) {
           this.stay(this.curHalfPage)
         }
@@ -160,7 +180,7 @@
               this.animating = false
               if (emitTurnEnd) {
                 emitTurnEnd = false
-                this.$emit('turnEnd', this.curPage, this.curHalfPage, this.data[this.curHalfPage])
+                this.$$emit('turnEnd')
               }
               this.resetAnimateClass()
             }, this.duration + 50)
@@ -185,7 +205,7 @@
               this.animating = false
               if (emitTurnEnd) {
                 emitTurnEnd = false
-                this.$emit('turnEnd', this.curPage, this.curHalfPage, this.data[this.curHalfPage])
+                this.$$emit('turnEnd')
               }
               this.resetAnimateClass()
             }, this.duration + 50)
@@ -240,9 +260,9 @@
         if (this.curPage - num < 1) return
         // 改变方向
         this.direction = TURNTORIGHT
-        this.$emit('turnStart', this.curPage, this.curHalfPage, this.data[this.curHalfPage])
+        this.$$emit('turnStart')
         this.curPage -= num
-        this.$emit('prev', this.curPage, this.curHalfPage, this.data[this.curHalfPage])
+        this.$$emit('prev')
       },
       // 下一页
       next (num) {
@@ -252,9 +272,9 @@
         if (this.curPage + num > this.pageCount) return
         // 改变方向
         this.direction = TURNTOLEFT
-        this.$emit('turnStart', this.curPage, this.curHalfPage, this.data[this.curHalfPage])
+        this.$$emit('turnStart')
         this.curPage += num
-        this.$emit('next', this.curPage, this.curHalfPage, this.data[this.curHalfPage])
+        this.$$emit('next')
       },
       // 数字四舍五入
       roundNum (any) {
@@ -281,9 +301,10 @@
             this.next()
           }
         } else {
-          this.curHalfPage += 1
-          this.$emit('readRight', this.curPage, this.curHalfPage, this.data[this.curHalfPage])
-          this.stay(this.curHalfPage)
+          if (this.autoNextPage) {
+            this.curHalfPage += 1
+            this.stay(this.curHalfPage)
+          }
         }
       },
       // 页面改变后进行计算
@@ -308,6 +329,9 @@
         }
       }
     },
+    mounted () {
+      this.getPages()
+    },
     watch: {
       // 监听变化重新渲染
       data () {
@@ -316,11 +340,15 @@
       // 页码改变之后的动画处理
       curPage (pageNum) {
         if (pageNum === 1) {
-          this.$emit('atFirstPage', this.curPage, this.curHalfPage, this.data[this.curHalfPage])
+          this.$$emit('atFirstPage')
         } else if (pageNum === this.pageCount) {
-          this.$emit('atEndPage', this.curPage, this.curHalfPage, this.data[this.curHalfPage])
+          this.$$emit('atEndPage')
         }
         this.computedData(pageNum)
+      },
+      // 每个半页改变
+      curHalfPage (num) {
+        this.$emit('indexPageChange', num)
       }
     }
   }
@@ -428,21 +456,21 @@
   @keyframes right-hidden {
     0% { /*  动画开始 */
       opacity: 1;
-      transform: rotate3d(0, 1, 0, 0deg) skewY(0deg);
+      transform: rotate3d(0, 1, 0, 0deg);
     }
     50% {
       opacity: 1;
       box-shadow: 0px 0px 20px #333333;
-      transform: rotate3d(0, 1, 0, 90deg) skewY(10deg);
+      transform: rotate3d(0, 1, 0, 90deg);
     }
     50.1% {
       opacity: 0;
-      transform: rotate3d(0, 1, 0, 90deg) skewY(10deg);
+      transform: rotate3d(0, 1, 0, 90deg);
     }
     100% { /*  动画结束 */
       opacity: 0;
       box-shadow: none;
-      transform: rotate3d(0, 1, 0, 180deg) skewY(0deg);
+      transform: rotate3d(0, 1, 0, 180deg);
     }
   }
 
@@ -450,21 +478,21 @@
   @keyframes right-visible {
     0% { /*  动画开始 */
       opacity: 0;
-      transform: rotate3d(0, 1, 0, 0deg) skewY(0deg);
+      transform: rotate3d(0, 1, 0, 0deg);
     }
     50% {
       opacity: 0;
       box-shadow: 0px 0px 20px #333333;
-      transform: rotate3d(0, 1, 0, 90deg) skewY(10deg);
+      transform: rotate3d(0, 1, 0, 90deg);
     }
     50.1% {
       opacity: 1;
-      transform: rotate3d(0, 1, 0, 90deg) skewY(10deg);
+      transform: rotate3d(0, 1, 0, 90deg);
     }
     100% { /*  动画结束 */
       opacity: 1;
       box-shadow: none;
-      transform: rotate3d(0, 1, 0, 180deg)  skewY(0deg);
+      transform: rotate3d(0, 1, 0, 180deg);
     }
   }
 
@@ -472,21 +500,21 @@
   @keyframes left-hidden {
     0% { /*  动画开始 */
       opacity: 1;
-      transform: rotate3d(0, 1, 0, 0deg) skewY(0deg);
+      transform: rotate3d(0, 1, 0, 0deg);
     }
     50% {
       opacity: 1;
       box-shadow: 0px 0px 20px #333333;
-      transform: rotate3d(0, 1, 0, -90deg) skewY(-10deg);
+      transform: rotate3d(0, 1, 0, -90deg);
     }
     50.1% {
       opacity: 0;
-      transform: rotate3d(0, 1, 0, -90deg) skewY(-10deg);
+      transform: rotate3d(0, 1, 0, -90deg);
     }
     100% { /*  动画结束 */
       opacity: 0;
       box-shadow: none;
-      transform: rotate3d(0, 1, 0, -180deg) skewY(0deg);
+      transform: rotate3d(0, 1, 0, -180deg);
     }
   }
 
@@ -494,21 +522,21 @@
   @keyframes left-visible {
     0% { /*  动画开始 */
       opacity: 0;
-      transform: rotate3d(0, 1, 0, 0deg) skewY(0deg);
+      transform: rotate3d(0, 1, 0, 0deg);
     }
     50% {
       opacity: 0;
       box-shadow: 0px 0px 20px #333333;
-      transform: rotate3d(0, 1, 0, -90deg) skewY(-10deg);
+      transform: rotate3d(0, 1, 0, -90deg);
     }
     50.1% {
       opacity: 1;
-      transform: rotate3d(0, 1, 0, -90deg) skewY(-10deg);
+      transform: rotate3d(0, 1, 0, -90deg);
     }
     100% { /*  动画结束 */
       opacity: 1;
       box-shadow: none;
-      transform: rotate3d(0, 1, 0, -180deg) skewY(0deg);
+      transform: rotate3d(0, 1, 0, -180deg);
     }
   }
 

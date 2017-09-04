@@ -38,8 +38,8 @@ Vue.use(Book)
 
 prop | desc | type | default | required
 ---|------|------|------|---
-width | 书整体宽度 | String | 600px | false
-height | 书整体高度 | String | 350px | false
+styleForPageMain | 书的样式调整 | Object | {} | false
+styleForPageIndex | 页码的样式调整 | Object | {} | false
 data | 书页数据 | Array | [x] | true
 turnPageByHand | 是否允许手动翻页 | Boolean | true | false
 initPage | 初始页码 | Number | 1 | false

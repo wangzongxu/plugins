@@ -245,6 +245,7 @@
       // 翻页
       turn (index) {
         if (!this.turnPageByHand) return
+        if (this.animating) return
         this.resetAnimateClass()
         if (index % 2 === 0) {
           this.prev()

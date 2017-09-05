@@ -138,11 +138,13 @@
             animateClass: '',
             rotate180: false,
             animationDuration: '0s',
-            left: false
+            left: false,
+            _left: false
           }, item)
           // 当前页之前的都在左边
           if (index <= this.curPage * 2 - 1 - 1) {
             page.left = true
+            page._left = true
           }
           pages.push(page)
         })
@@ -176,14 +178,13 @@
             if (this.curPage === 1) return
             // 动画完成后使其保持动画后的位置
             let time = setTimeout(() => {
-              page.left = true
+              page._left = true
               this.animating = false
               if (emitTurnEnd) {
                 emitTurnEnd = false
                 this.$$emit('turnEnd')
               }
-              this.resetAnimateClass()
-            }, this.duration + 150)
+            }, this.duration + 50)
             // 动画中的前一页翻过去，隐藏掉
             if (this.curPage * 2 - 3 === index) {
               page.animateClass = `${TURNTOLEFT}-${HIDDEN}`
@@ -201,14 +202,13 @@
             if (this.curPage === this.pageCount) return
             // 动画完成后使其保持动画后的位置
             let time = setTimeout(() => {
-              page.left = false
+              page._left = false
               this.animating = false
               if (emitTurnEnd) {
                 emitTurnEnd = false
                 this.$$emit('turnEnd')
               }
-              this.resetAnimateClass()
-            }, this.duration + 150)
+            }, this.duration + 50)
             // 动画中的前一页翻过去，隐藏掉
             if (this.curPage * 2 - 1 === index) {
               page.animateClass = `${TURNTORIGHT}-${VISIBLE}`
@@ -228,9 +228,8 @@
       resetAnimateClass () {
         this.pages.forEach(page => {
           page.animateClass = ''
+          page.left = page._left
         })
-        // 清空类名之后视图不会更新，这里让vue强制更新视图
-        this.$forceUpdate()
       },
       // 设置书页层叠高度当前页面最高，其他页面递减
       set_zIndex (index) {
@@ -246,6 +245,7 @@
       // 翻页
       turn (index) {
         if (!this.turnPageByHand) return
+        this.resetAnimateClass()
         if (index % 2 === 0) {
           this.prev()
         } else {
